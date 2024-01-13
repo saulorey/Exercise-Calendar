@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro de Peso Levantado - Mayo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    form {
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 16px;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    canvas {
+      margin-top: 20px;
+      border: 1px solid #ddd;
+      width: 50px; /* Ancho reducido */
+      height: 30px; /* Altura reducida */
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Registro de Peso Levantado - Mayo</h2>
+
+  <form id="weightForm">
+    <!-- Utilizar un bucle para generar campos para cada día del mes de mayo -->
+    <!-- Puedes cambiar el tipo de input según tus necesidades -->
+    <!-- Por ejemplo, puedes usar type="number" si solo aceptas números -->
+
+    <!-- JavaScript generará estos campos -->
+    <script>
+      for (let day = 1; day <= 31; day++) {
+        document.write(`
+          <label for="day${day}">${day} de mayo:</label>
+          <input type="text" id="day${day}" name="day${day}">
+        `);
+      }
+    </script>
+
+    <button type="button" onclick="updateChart()">Enviar</button>
+    <button type="button" onclick="downloadChart()">Descargar Gráfica</button>
+  </form>
+
+  <!-- Ajustar el tamaño de la gráfica -->
+  <canvas id="myChart" width="50" height="25"></canvas>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <script>
+    // Inicializar la gráfica vacía
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var myChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: Array.from({ length: 31 }, (_, i) => (i + 1).toString()), // Números del 1 al 31
+        datasets: [{
+          label: 'Peso Levantado',
+          data: Array(31).fill(null), // Datos vacíos
+          fill: true,  // Conectar puntos con líneas
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1, // Ancho de la línea reducido
+          pointRadius: 2, // Tamaño de los puntos reducido
+          pointBackgroundColor: 'rgba(75, 192, 192, 1)',
+          pointBorderColor: 'rgba(75, 192, 192, 1)',
+          pointHoverRadius: 4, // Tamaño de los puntos al pasar el mouse reducido
+          pointHoverBackgroundColor: 'rgba(75, 192, 192, 1)',
+          pointHoverBorderColor: 'rgba(220, 220, 220, 1)',
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    function updateChart() {
+      // Actualizar datos de la gráfica con los valores ingresados por el usuario
+      for (let day = 1; day <= 31; day++) {
+        let inputValue = document.getElementById(`day${day}`).value;
+        myChart.data.datasets[0].data[day - 1] = inputValue ? parseInt(inputValue) : null;
+      }
+
+      // Actualizar la gráfica
+      myChart.update();
+    }
+
+    function downloadChart() {
+      // Utilizar html2canvas para convertir la gráfica en una imagen
+      html2canvas(document.getElementById('myChart')).then(function(canvas) {
+        // Crear un enlace de descarga con la imagen en formato PNG
+        var link = document.createElement('a');
+        link.href = canvas.toDataURL('image/png');
+        link.download = 'grafica.png';
+        link.click();
+      });
+    }
+  </script>
+
+</body>
+</html>
